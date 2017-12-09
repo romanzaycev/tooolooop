@@ -1,6 +1,6 @@
 # Tooolooop
 ---
-[![Build status][travis-image]][travis-url] [![Code coverages][codecov-image]][codecov-url] [![Code climate][codeclimate-image]][codeclimate-image]
+[![Build status][travis-image]][travis-url] [![Code coverages][codecov-image]][codecov-url] [![Code climate][codeclimate-image]][codeclimate-url]
 
 
 PHP7 lightweight native templates.
