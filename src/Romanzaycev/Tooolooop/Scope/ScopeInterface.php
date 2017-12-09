@@ -45,9 +45,10 @@ interface ScopeInterface
 
     /**
      * @param string $layout
+     * @param array $data
      * @return void
      */
-    public function extend(string $layout);
+    public function extend(string $layout, array $data = []);
 
     /**
      * @param string $template

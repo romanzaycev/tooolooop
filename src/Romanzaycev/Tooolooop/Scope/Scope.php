@@ -93,8 +93,9 @@ class Scope implements ScopeInterface
      * Set parent layout.
      *
      * @param string $layout
+     * @param array $data
      */
-    public function extend(string $layout)
+    public function extend(string $layout, array $data = [])
     {
         $this->proxyCall(__FUNCTION__, func_get_args());
     }

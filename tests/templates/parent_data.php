@@ -1,0 +1,1 @@
+<div><?=$this->e($foo)?></div>

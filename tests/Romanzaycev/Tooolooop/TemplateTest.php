@@ -108,6 +108,18 @@ class TemplateTest extends TestCase
         $this->assertEquals('<div>YOLO</div>', $template->render());
     }
 
+    public function testRenderParentTemplateWithDataPassing()
+    {
+        $this
+            ->engine
+            ->shouldReceive('make')
+            ->withArgs(['parent_data'])
+            ->andReturn(new Template($this->engine, 'parent_data'));
+
+        $template = new Template($this->engine, 'child_data');
+        $this->assertEquals('<div>YOLO</div>', $template->render());
+    }
+
     public function testRenderWithSiblingParentTemplate()
     {
         $this

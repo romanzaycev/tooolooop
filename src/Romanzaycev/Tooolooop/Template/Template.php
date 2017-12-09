@@ -167,6 +167,8 @@ class Template implements TemplateInterface
         } else {
             $this->parentTemplate = $template;
         }
+
+        $this->parentTemplateData = $data;
     }
 
     /**
