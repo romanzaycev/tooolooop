@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Romanzaycev\Tooolooop\EngineInterface;
 use Romanzaycev\Tooolooop\Template\Exceptions\NestedBlockRenderingException;
 use Romanzaycev\Tooolooop\Template\Exceptions\NoStartingBlockException;
+use Romanzaycev\Tooolooop\Template\Exceptions\RestrictedBlockName;
 use Romanzaycev\Tooolooop\Template\Exceptions\TemplateNotFoundException;
 use Romanzaycev\Tooolooop\Template\Template;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
@@ -172,6 +173,20 @@ class TemplateTest extends TestCase
 
         $template = new Template($this->engine, 'block/child');
         $this->assertEquals('<div>YOLO</div>', $template->render(['foo' => 'YOLO']));
+    }
+
+    public function testRenderBlockWithEmptyName()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $template = new Template($this->engine, 'block/empty_name');
+        $template->render();
+    }
+
+    public function testRenderBlockWithRestrictedName()
+    {
+        $this->expectException(RestrictedBlockName::class);
+        $template = new Template($this->engine, 'block/restricted_name');
+        $template->render();
     }
 
     public function testRenderWithCustomExtension()

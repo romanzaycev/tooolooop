@@ -14,6 +14,7 @@ use Romanzaycev\Tooolooop\EngineInterface;
 use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Template\Exceptions\NestedBlockRenderingException;
 use Romanzaycev\Tooolooop\Template\Exceptions\NoStartingBlockException;
+use Romanzaycev\Tooolooop\Template\Exceptions\RestrictedBlockName;
 use Romanzaycev\Tooolooop\Template\Exceptions\TemplateNotFoundException;
 
 /**
@@ -215,9 +216,17 @@ class Template implements TemplateInterface
      *
      * @param string $name
      * @throws NestedBlockRenderingException
+     * @throws RestrictedBlockName
      */
     protected function start(string $name)
     {
+        if(empty($name)) {
+            throw new \InvalidArgumentException(sprintf(
+                "Empty block name in template \"%s\"",
+                $this->name
+            ));
+        }
+
         if (!is_null($this->currentBlock)) {
             throw new NestedBlockRenderingException(
                 sprintf(
@@ -226,6 +235,13 @@ class Template implements TemplateInterface
                     $this->name . '.' . $this->engine->getExtension()
                 )
             );
+        }
+
+        if(strtolower($name) === self::CONTENT_NAME) {
+            throw new RestrictedBlockName(sprintf(
+                "Block name `content` in restricted for use. Template \"%s\"",
+                $this->name
+            ));
         }
 
         $this->currentBlock = $name;
