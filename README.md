@@ -18,7 +18,7 @@ composer require romanzaycev/tooolooop
 ```php
 <?php declare(strict_types = 1);
 
-include "vendor/autoload.php";
+require "vendor/autoload.php";
 
 use Romanzaycev\Tooolooop\Engine;
 
@@ -32,17 +32,17 @@ echo $template->render();
 
 `views/page.php`:
 ```html
-<?php $this->extend('layout')?>
+<?php $this->extend('layout') ?>
 
 <section>
-	<?=$this->e($text)?>
+  <?=$this->e($text)?>
 </section>
 
-<?php $this->start('footer')?>
+<?php $this->start('footer') ?>
 <footer>
-	Some footer content.
+  Some footer content.
 </footer>
-<?php $this->end()?>
+<?php $this->end() ?>
 ```
 
 `views/layout.php`:
@@ -54,12 +54,12 @@ echo $template->render();
 <title>Example</title>
 </head>
 <body>
-	<main>
-		<h1>Example</h1>
-		<?=$this->block('content')?>
-	</main>
-	
-	<?=$this->block('footer')?>
+  <main>
+    <h1>Example</h1>
+    <?=$this->block('content')?>
+  </main>
+
+  <?=$this->block('footer')?>
 </body>
 </html>
 ```
