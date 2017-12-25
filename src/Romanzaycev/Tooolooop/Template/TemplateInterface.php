@@ -10,6 +10,8 @@
 
 namespace Romanzaycev\Tooolooop\Template;
 
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
+
 /**
  * Interface TemplateInterface
  *
@@ -30,8 +32,9 @@ interface TemplateInterface
      * Render template.
      *
      * @param array $data
+     * @param ScopeInterface|null $scope optional template custom scope
      * @return string rendered template
      */
-    public function render(array $data = []): string;
+    public function render(array $data = [], ScopeInterface $scope = null): string;
 
 }

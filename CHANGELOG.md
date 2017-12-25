@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2017-12-26
+
+### Changed
+
+* Bugfix: correcting template interface
+
 ## [0.2.0] - 2017-12-25
 
 ### Changed
