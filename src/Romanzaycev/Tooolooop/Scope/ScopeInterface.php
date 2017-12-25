@@ -10,6 +10,8 @@
 
 namespace Romanzaycev\Tooolooop\Scope;
 
+use Romanzaycev\Tooolooop\Template\TemplateInterface;
+
 /**
  * Interface ScopeInterface
  *
@@ -20,41 +22,19 @@ interface ScopeInterface
 {
 
     /**
-     * @param string $name
-     * @return mixed
-     */
-    public function block(string $name = 'content');
-
-    /**
-     * @param string $name
+     * Set template.
+     *
+     * @param TemplateInterface $template
      * @return void
      */
-    public function start(string $name);
+    public function setTemplate(TemplateInterface $template);
 
     /**
-     * @return void
-     */
-    public function end();
-
-    /**
-     * @param $variable
-     * @param array $filters
-     * @return mixed|string
-     */
-    public function e($variable, array $filters = []);
-
-    /**
-     * @param string $layout
+     * Set template data.
+     *
      * @param array $data
      * @return void
      */
-    public function extend(string $layout, array $data = []);
-
-    /**
-     * @param string $template
-     * @param array $data
-     * @return string
-     */
-    public function load(string $template, array $data = []);
+    public function setData(array $data = []);
 
 }

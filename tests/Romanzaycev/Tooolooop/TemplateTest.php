@@ -13,6 +13,7 @@ namespace Romanzaycev\Tooolooop\Tests;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\TestCase;
 use Romanzaycev\Tooolooop\EngineInterface;
+use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Template\Exceptions\NestedBlockRenderingException;
 use Romanzaycev\Tooolooop\Template\Exceptions\NoStartingBlockException;
 use Romanzaycev\Tooolooop\Template\Exceptions\RestrictedBlockName;
@@ -233,5 +234,17 @@ class TemplateTest extends TestCase
     {
         $template = new Template($this->engine, 'filter/func_args');
         $this->assertEquals('foo', $template->render(['foo' => '    foo    ']));
+    }
+
+    public function testRenderWithCustomScope()
+    {
+        $template = new Template($this->engine, 'custom_scope');
+        $fixture = new class extends Scope {
+            protected function custom()
+            {
+                echo 'CustomScope';
+            }
+        };
+        $this->assertEquals('CustomScope', $template->render([], $fixture));
     }
 }

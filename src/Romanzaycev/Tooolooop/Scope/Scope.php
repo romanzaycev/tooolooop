@@ -37,19 +37,23 @@ class Scope implements ScopeInterface
     private $data = [];
 
     /**
-     * Scope constructor.
+     * Set template.
      *
      * @param TemplateInterface $template
-     * @param array $data
      */
-    public function __construct(TemplateInterface $template, array $data = [])
+    public function setTemplate(TemplateInterface $template)
     {
         $this->template = $template;
-        $this->data = $data;
+    }
 
-        $this->proxy = function ($method, $arguments) use ($template) {
-            return call_user_func_array([$template, $method], $arguments);
-        };
+    /**
+     * Set template data.
+     *
+     * @param array $data
+     */
+    public function setData(array $data = [])
+    {
+        $this->data = $data;
     }
 
     /**
@@ -122,6 +126,7 @@ class Scope implements ScopeInterface
         $context = function () use ($path) {
             extract($this->data);
 
+            /** @noinspection PhpIncludeInspection */
             include $path;
         };
         $context();
@@ -134,6 +139,21 @@ class Scope implements ScopeInterface
      */
     private function proxyCall(string $method, array $arguments = [])
     {
-        return $this->proxy->call($this->template, $method, $arguments);
+        return $this->ensureProxy()->call($this->template, $method, $arguments);
+    }
+
+    /**
+     * @return \Closure
+     */
+    private function ensureProxy()
+    {
+        $template = $this->template;
+        if(is_null($this->proxy)) {
+            $this->proxy = function ($method, $arguments) use ($template) {
+                return call_user_func_array([$template, $method], $arguments);
+            };
+        }
+
+        return $this->proxy;
     }
 }

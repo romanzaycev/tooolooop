@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] - 2017-12-25
+
+### Changed
+
+* Added: template custom scope support
+
 ## [0.1.2] - 2017-12-12
 
 ### Changed

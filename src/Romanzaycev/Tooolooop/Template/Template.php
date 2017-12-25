@@ -12,6 +12,7 @@ namespace Romanzaycev\Tooolooop\Template;
 
 use Romanzaycev\Tooolooop\EngineInterface;
 use Romanzaycev\Tooolooop\Scope\Scope;
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 use Romanzaycev\Tooolooop\Template\Exceptions\NestedBlockRenderingException;
 use Romanzaycev\Tooolooop\Template\Exceptions\NoStartingBlockException;
 use Romanzaycev\Tooolooop\Template\Exceptions\RestrictedBlockName;
@@ -105,10 +106,12 @@ class Template implements TemplateInterface
      * Render template.
      *
      * @param array $data template data
+     * @param ScopeInterface|null $scope optional template rendering scope
      * @return string rendered template
+     * @throws TemplateNotFoundException
      * @throws \Throwable
      */
-    public function render(array $data = []): string
+    public function render(array $data = [], ScopeInterface $scope = null): string
     {
         $this->assign($data);
 
@@ -119,33 +122,18 @@ class Template implements TemplateInterface
         $bufferingLevel = 0;
         try {
             $bufferingLevel = ob_get_level();
-
             ob_start();
-            $scope = new Scope($this, $this->data);
-            $scope->perform($this->getPath());
 
-            $content = ob_get_clean();
-
-            if ($this->parentTemplate !== null) {
-                /**
-                 * @var Template $parentTemplate
-                 */
-                $parentTemplate = $this->engine->make(
-                    $this->parentTemplate
-                );
-
-                $parentTemplate->inheritedBlocks = array_merge(
-                    $this->blocks,
-                    [self::CONTENT_NAME => $content]
-                );
-
-                $content = $parentTemplate->render(array_merge(
-                    $this->data,
-                    $this->parentTemplateData
-                ));
+            if (is_null($scope)) {
+                $scope = new Scope();
             }
 
-            return $content;
+            $scope->setTemplate($this);
+            $scope->setData($this->data);
+            $scope->perform($this->getPath());
+            $content = ob_get_clean();
+
+            return $this->renderParentTemplate($content);
         } catch (\Throwable $e) {
             while (ob_get_level() > $bufferingLevel) {
                 ob_end_clean();
@@ -220,7 +208,7 @@ class Template implements TemplateInterface
      */
     protected function start(string $name)
     {
-        if(empty($name)) {
+        if (empty($name)) {
             throw new \InvalidArgumentException(sprintf(
                 "Empty block name in template \"%s\"",
                 $this->name
@@ -237,7 +225,7 @@ class Template implements TemplateInterface
             );
         }
 
-        if(strtolower($name) === self::CONTENT_NAME) {
+        if (strtolower($name) === self::CONTENT_NAME) {
             throw new RestrictedBlockName(sprintf(
                 "Block name `content` in restricted for use. Template \"%s\"",
                 $this->name
@@ -286,6 +274,36 @@ class Template implements TemplateInterface
             $variable,
             $filters
         );
+    }
+
+    /**
+     * @param string $content
+     * @return string
+     * @throws TemplateNotFoundException
+     * @throws \Throwable
+     */
+    private function renderParentTemplate(string $content = ''): string
+    {
+        if (!is_null($this->parentTemplate)) {
+            /**
+             * @var Template $parentTemplate
+             */
+            $parentTemplate = $this->engine->make(
+                $this->parentTemplate
+            );
+
+            $parentTemplate->inheritedBlocks = array_merge(
+                $this->blocks,
+                [self::CONTENT_NAME => $content]
+            );
+
+            $content = $parentTemplate->render(array_merge(
+                $this->data,
+                $this->parentTemplateData
+            ));
+        }
+
+        return $content;
     }
 
     /**
@@ -389,31 +407,54 @@ class Template implements TemplateInterface
         $appliedValue = $value;
 
         foreach ($functions as $k => $v) {
-            $arguments = [$appliedValue];
+            $params = [];
             if (is_numeric($k)) {
                 $filter = $v;
-                $params = [];
             } else {
                 $filter = $k;
                 $params = $v;
             }
 
-            if (!is_array($params)) {
-                $params = [$params];
-            }
+            $arguments = $this->getFunctionArguments($appliedValue, $params);
 
-            $arguments = array_merge($arguments, $params);
-
-            if ($appliedValue !== null) {
+            if (!is_null($appliedValue)) {
                 if (is_callable($filter)) {
                     $appliedValue = call_user_func_array($filter, $arguments);
                 } else {
-                    $func = $this->engine->getFilterFunction($filter);
-                    $appliedValue = call_user_func_array($func, $arguments);
+                    $appliedValue = call_user_func_array(
+                        $this->engine->getFilterFunction($filter),
+                        $arguments
+                    );
                 }
             }
         }
 
         return $appliedValue;
+    }
+
+    /**
+     * @param mixed $params
+     * @return array
+     */
+    private function getFunctionParams($params): array
+    {
+        if (!is_array($params)) {
+            $params = [$params];
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param mixed $value
+     * @param mixed $params
+     * @return array
+     */
+    private function getFunctionArguments($value, $params)
+    {
+        return array_merge(
+            [$value],
+            $this->getFunctionParams($params)
+        );
     }
 }

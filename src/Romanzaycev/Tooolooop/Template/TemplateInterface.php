@@ -21,7 +21,7 @@ interface TemplateInterface
     /**
      * Assign template data.
      *
-     * @param [] $data
+     * @param array $data
      * @return TemplateInterface self
      */
     public function assign(array $data = []): TemplateInterface;

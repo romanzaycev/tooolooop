@@ -36,7 +36,7 @@ abstract class Filter implements FilterInterface
      */
     public function getName(): string
     {
-        if ($this->name === null) {
+        if (is_null($this->name)) {
             $this->name = $this->defineName();
         }
 
@@ -50,7 +50,7 @@ abstract class Filter implements FilterInterface
      */
     public function getFunction(): callable
     {
-        if ($this->function === null) {
+        if (is_null($this->function)) {
             $this->function = $this->defineFunction();
         }
 
