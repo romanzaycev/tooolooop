@@ -148,7 +148,7 @@ class Scope implements ScopeInterface
     private function ensureProxy()
     {
         $template = $this->template;
-        if(is_null($this->proxy)) {
+        if (is_null($this->proxy)) {
             $this->proxy = function ($method, $arguments) use ($template) {
                 return call_user_func_array([$template, $method], $arguments);
             };

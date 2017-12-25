@@ -116,4 +116,11 @@ class EngineTest extends TestCase
         $engine = new Engine();
         $this->assertEquals('bar', $engine->getFilterFunction('replace')('foo', 'foo', 'bar'));
     }
+
+    public function testScopeClassGetterAndSetter()
+    {
+        $engine = new Engine();
+        $engine->setScopeClass('foo');
+        $this->assertEquals('foo', $engine->getScopeClass());
+    }
 }

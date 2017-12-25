@@ -13,6 +13,7 @@ namespace Romanzaycev\Tooolooop;
 use Romanzaycev\Tooolooop\Filter\Escape;
 use Romanzaycev\Tooolooop\Filter\Filter;
 use Romanzaycev\Tooolooop\Filter\Replace;
+use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Template\Template;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
 use Romanzaycev\Tooolooop\Filter\FilterInterface;
@@ -27,7 +28,7 @@ use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 class Engine implements EngineInterface
 {
 
-    const VERSION = '0.1.0';
+    const VERSION = '0.3.0';
 
     /**
      * @var string
@@ -46,6 +47,11 @@ class Engine implements EngineInterface
         'escape' => Escape::class,
         'replace' => Replace::class
     ];
+
+    /**
+     * @var string
+     */
+    private $scopeClass = Scope::class;
 
     /**
      * Engine constructor.
@@ -160,6 +166,26 @@ class Engine implements EngineInterface
         }
 
         return $this->filters[$filter];
+    }
+
+    /**
+     * Set default template scope class name.
+     *
+     * @param string $class class name
+     */
+    public function setScopeClass(string $class = Scope::class)
+    {
+        $this->scopeClass = $class;
+    }
+
+    /**
+     * Get default scope class name.
+     *
+     * @return string class name
+     */
+    public function getScopeClass(): string
+    {
+        return $this->scopeClass;
     }
 
 }

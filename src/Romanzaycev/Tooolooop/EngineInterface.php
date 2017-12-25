@@ -10,6 +10,7 @@
 
 namespace Romanzaycev\Tooolooop;
 
+use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
 use Romanzaycev\Tooolooop\Filter\FilterInterface;
 
@@ -67,5 +68,19 @@ interface EngineInterface
      * @return callable filter function
      */
     public function getFilterFunction(string $name): callable;
+
+    /**
+     * Set default template scope class name.
+     *
+     * @param string $class scope class name
+     */
+    public function setScopeClass(string $class = Scope::class);
+
+    /**
+     * Get default template scope class name.
+     *
+     * @return string class name
+     */
+    public function getScopeClass(): string;
 
 }

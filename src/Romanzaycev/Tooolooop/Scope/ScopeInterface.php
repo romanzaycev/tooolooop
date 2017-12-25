@@ -37,4 +37,12 @@ interface ScopeInterface
      */
     public function setData(array $data = []);
 
+
+    /**
+     * Perform template.
+     *
+     * @param string $path
+     */
+    public function perform(string $path);
+
 }

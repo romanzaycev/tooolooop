@@ -50,6 +50,9 @@ class TemplateTest extends TestCase
             ->andReturn(function ($param) {
                 return htmlspecialchars($param, ENT_QUOTES, 'UTF-8');
             });
+        $engineMock
+            ->shouldReceive('getScopeClass')
+            ->andReturn(Scope::class);
 
         $this->engine = $engineMock;
     }
@@ -199,6 +202,9 @@ class TemplateTest extends TestCase
         $engineMock
             ->shouldReceive('getExtension')
             ->andReturn('tpl');
+        $engineMock
+            ->shouldReceive('getScopeClass')
+            ->andReturn(Scope::class);
 
         $template = new Template($engineMock, 'custom_ext');
         $this->assertEquals('foo', $template->render());

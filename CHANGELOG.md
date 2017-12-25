@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0] - 2017-12-26
+
+### Changed
+
+* Added: engine custom scope support
+* Bugfix: correcting scope interface
+
 ## [0.2.1] - 2017-12-26
 
 ### Changed

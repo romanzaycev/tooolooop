@@ -11,7 +11,6 @@
 namespace Romanzaycev\Tooolooop\Template;
 
 use Romanzaycev\Tooolooop\EngineInterface;
-use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 use Romanzaycev\Tooolooop\Template\Exceptions\NestedBlockRenderingException;
 use Romanzaycev\Tooolooop\Template\Exceptions\NoStartingBlockException;
@@ -125,7 +124,8 @@ class Template implements TemplateInterface
             ob_start();
 
             if (is_null($scope)) {
-                $scope = new Scope();
+                $scopeClass = $this->engine->getScopeClass();
+                $scope = new $scopeClass();
             }
 
             $scope->setTemplate($this);
