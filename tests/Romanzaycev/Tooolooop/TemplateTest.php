@@ -48,7 +48,7 @@ class TemplateTest extends TestCase
             ->shouldReceive('getFilterFunction')
             ->withArgs(['escape'])
             ->andReturn(function ($param) {
-                return htmlspecialchars($param, ENT_QUOTES, 'UTF-8');
+                return \htmlspecialchars($param, \ENT_QUOTES, 'UTF-8');
             });
         $engineMock
             ->shouldReceive('getScopeClass')

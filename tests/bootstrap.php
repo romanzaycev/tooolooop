@@ -8,6 +8,6 @@
  * file that was distributed with this source code.
  */
 
-define("TOOOLOOOP_TEST_DIR", __DIR__);
+\define("TOOOLOOOP_TEST_DIR", __DIR__);
 
-require dirname(TOOOLOOOP_TEST_DIR) . '/vendor/autoload.php';
+require \dirname(TOOOLOOOP_TEST_DIR) . '/vendor/autoload.php';

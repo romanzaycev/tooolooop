@@ -33,7 +33,7 @@ class Replace extends Filter
     protected function defineFunction(): callable
     {
         return function ($value, $from, $to) {
-            return str_ireplace($from, $to, $value);
+            return \str_ireplace($from, $to, $value);
         };
     }
 }

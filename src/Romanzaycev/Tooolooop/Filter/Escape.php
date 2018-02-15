@@ -33,9 +33,9 @@ class Escape extends Filter
     protected function defineFunction(): callable
     {
         return function ($value = '') {
-            return htmlspecialchars(
+            return \htmlspecialchars(
                 $value,
-                ENT_QUOTES,
+                \ENT_QUOTES,
                 'UTF-8'
             );
         };

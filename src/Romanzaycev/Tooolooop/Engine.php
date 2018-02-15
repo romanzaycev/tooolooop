@@ -93,7 +93,7 @@ class Engine implements EngineInterface
      */
     public function setDirectory(string $directory)
     {
-        $directory = str_replace('\\', DIRECTORY_SEPARATOR, $directory);
+        $directory = \str_replace('\\', DIRECTORY_SEPARATOR, $directory);
         $this->directory = DIRECTORY_SEPARATOR . trim($directory, DIRECTORY_SEPARATOR);
     }
 
@@ -114,8 +114,8 @@ class Engine implements EngineInterface
      */
     public function setExtension(string $extension)
     {
-        if (substr($extension, 0, 1) === '.') {
-            $extension = substr($extension, 1);
+        if (\substr($extension, 0, 1) === '.') {
+            $extension = \substr($extension, 1);
         }
 
         $this->extension = $extension;
@@ -131,14 +131,14 @@ class Engine implements EngineInterface
     {
         if ($filter instanceof FilterInterface) {
             $this->filters[$filter->getName()] = $filter->getFunction();
-        } elseif (is_string($filter) && is_callable($callback)) {
+        } elseif (\is_string($filter) && \is_callable($callback)) {
             $this->filters[$filter] = $callback;
         } else {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     "Unexpected arguments types: %s and %s, expected FilterInterface or string; callable or null",
-                    gettype($filter),
-                    gettype($callback)
+                    \gettype($filter),
+                    \gettype($callback)
                 )
             );
         }
@@ -153,11 +153,11 @@ class Engine implements EngineInterface
      */
     public function getFilterFunction(string $filter): callable
     {
-        if (!array_key_exists($filter, $this->filters)) {
-            throw new FilterNotFoundException(sprintf("Not found filter with name \"%s\"", $filter));
+        if (!\array_key_exists($filter, $this->filters)) {
+            throw new FilterNotFoundException(\sprintf("Not found filter with name \"%s\"", $filter));
         }
 
-        if (is_string($this->filters[$filter])) {
+        if (\is_string($this->filters[$filter])) {
             /**
              * @var Filter $filterInstance
              */

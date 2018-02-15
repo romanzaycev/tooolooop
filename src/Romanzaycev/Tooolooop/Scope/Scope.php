@@ -62,7 +62,7 @@ class Scope implements ScopeInterface
      */
     public function block(string $name = 'content')
     {
-        return $this->proxyCall(__FUNCTION__, func_get_args());
+        return $this->proxyCall(__FUNCTION__, \func_get_args());
     }
 
     /**
@@ -70,7 +70,7 @@ class Scope implements ScopeInterface
      */
     public function start(string $name)
     {
-        $this->proxyCall(__FUNCTION__, func_get_args());
+        $this->proxyCall(__FUNCTION__, \func_get_args());
     }
 
     /**
@@ -90,7 +90,7 @@ class Scope implements ScopeInterface
      */
     public function e($variable, array $filters = [])
     {
-        return $this->proxyCall(__FUNCTION__, func_get_args());
+        return $this->proxyCall(__FUNCTION__, \func_get_args());
     }
 
     /**
@@ -101,7 +101,7 @@ class Scope implements ScopeInterface
      */
     public function extend(string $layout, array $data = [])
     {
-        $this->proxyCall(__FUNCTION__, func_get_args());
+        $this->proxyCall(__FUNCTION__, \func_get_args());
     }
 
     /**
@@ -113,7 +113,7 @@ class Scope implements ScopeInterface
      */
     public function load(string $template, array $data = [])
     {
-        return $this->proxyCall(__FUNCTION__, func_get_args());
+        return $this->proxyCall(__FUNCTION__, \func_get_args());
     }
 
     /**
@@ -124,7 +124,7 @@ class Scope implements ScopeInterface
     public function perform(string $path)
     {
         $context = function () use ($path) {
-            extract($this->data);
+            \extract($this->data);
 
             /** @noinspection PhpIncludeInspection */
             include $path;
@@ -148,9 +148,9 @@ class Scope implements ScopeInterface
     private function ensureProxy()
     {
         $template = $this->template;
-        if (is_null($this->proxy)) {
+        if (\is_null($this->proxy)) {
             $this->proxy = function ($method, $arguments) use ($template) {
-                return call_user_func_array([$template, $method], $arguments);
+                return \call_user_func_array([$template, $method], $arguments);
             };
         }
 

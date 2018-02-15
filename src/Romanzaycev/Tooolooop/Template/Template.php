@@ -90,13 +90,13 @@ class Template implements TemplateInterface
     {
         $_data = [];
 
-        foreach (array_keys($data) as $key) {
-            if (is_string($key)) {
+        foreach (\array_keys($data) as $key) {
+            if (\is_string($key)) {
                 $_data[$key] = $data[$key];
             }
         }
 
-        $this->data = array_merge($this->data, $_data);
+        $this->data = \array_merge($this->data, $_data);
 
         return $this;
     }
@@ -120,10 +120,10 @@ class Template implements TemplateInterface
 
         $bufferingLevel = 0;
         try {
-            $bufferingLevel = ob_get_level();
-            ob_start();
+            $bufferingLevel = \ob_get_level();
+            \ob_start();
 
-            if (is_null($scope)) {
+            if (\is_null($scope)) {
                 $scopeClass = $this->engine->getScopeClass();
                 $scope = new $scopeClass();
             }
@@ -131,12 +131,12 @@ class Template implements TemplateInterface
             $scope->setTemplate($this);
             $scope->setData($this->data);
             $scope->perform($this->getPath());
-            $content = ob_get_clean();
+            $content = \ob_get_clean();
 
             return $this->renderParentTemplate($content);
         } catch (\Throwable $e) {
-            while (ob_get_level() > $bufferingLevel) {
-                ob_end_clean();
+            while (\ob_get_level() > $bufferingLevel) {
+                \ob_end_clean();
             }
 
             throw $e;
@@ -192,7 +192,7 @@ class Template implements TemplateInterface
             $block = self::CONTENT_NAME;
         }
 
-        if (array_key_exists($block, $this->inheritedBlocks)) {
+        if (\array_key_exists($block, $this->inheritedBlocks)) {
             return $this->inheritedBlocks[$block];
         }
 
@@ -215,9 +215,9 @@ class Template implements TemplateInterface
             ));
         }
 
-        if (!is_null($this->currentBlock)) {
+        if (!\is_null($this->currentBlock)) {
             throw new NestedBlockRenderingException(
-                sprintf(
+                \sprintf(
                     "Nested block rendering is prohibited. Trying to render block \"%s\" in template \"%s\"",
                     $name,
                     $this->name . '.' . $this->engine->getExtension()
@@ -225,8 +225,8 @@ class Template implements TemplateInterface
             );
         }
 
-        if (strtolower($name) === self::CONTENT_NAME) {
-            throw new RestrictedBlockName(sprintf(
+        if (\strtolower($name) === self::CONTENT_NAME) {
+            throw new RestrictedBlockName(\sprintf(
                 "Block name `content` in restricted for use. Template \"%s\"",
                 $this->name
             ));
@@ -235,7 +235,7 @@ class Template implements TemplateInterface
         $this->currentBlock = $name;
         $this->blocks[$name] = '';
 
-        ob_start();
+        \ob_start();
     }
 
     /**
@@ -246,13 +246,13 @@ class Template implements TemplateInterface
      */
     protected function end()
     {
-        if (is_null($this->currentBlock)) {
+        if (\is_null($this->currentBlock)) {
             throw new NoStartingBlockException(
-                sprintf("Unexpected block ending, template \"%s\"", $this->name)
+                \sprintf("Unexpected block ending, template \"%s\"", $this->name)
             );
         }
 
-        $content = ob_get_clean();
+        $content = \ob_get_clean();
         $this->blocks[$this->currentBlock] = $content;
         $this->currentBlock = null;
     }
@@ -266,7 +266,7 @@ class Template implements TemplateInterface
      */
     protected function e($variable, $filters = [])
     {
-        if (!in_array('escape', $filters)) {
+        if (!\in_array('escape', $filters)) {
             $filters[] = 'escape';
         }
 
@@ -284,7 +284,7 @@ class Template implements TemplateInterface
      */
     private function renderParentTemplate(string $content = ''): string
     {
-        if (!is_null($this->parentTemplate)) {
+        if (!\is_null($this->parentTemplate)) {
             /**
              * @var Template $parentTemplate
              */
@@ -292,12 +292,12 @@ class Template implements TemplateInterface
                 $this->parentTemplate
             );
 
-            $parentTemplate->inheritedBlocks = array_merge(
+            $parentTemplate->inheritedBlocks = \array_merge(
                 $this->blocks,
                 [self::CONTENT_NAME => $content]
             );
 
-            $content = $parentTemplate->render(array_merge(
+            $content = $parentTemplate->render(\array_merge(
                 $this->data,
                 $this->parentTemplateData
             ));
@@ -312,14 +312,14 @@ class Template implements TemplateInterface
      */
     private function isSiblingTemplate(string $template): bool
     {
-        if (substr($template, 0, 1) === '.') {
-            $directory = dirname($this->getPath());
+        if (\substr($template, 0, 1) === '.') {
+            $directory = \dirname($this->getPath());
             $template = $this->sanitizePathSegment($template);
             $extension = $this->engine->getExtension();
 
             return (
-                file_exists($directory . DIRECTORY_SEPARATOR . $template . '.' . $extension)
-                && !is_dir($directory . DIRECTORY_SEPARATOR . $template . '.' . $extension)
+                \file_exists($directory . DIRECTORY_SEPARATOR . $template . '.' . $extension)
+                && !\is_dir($directory . DIRECTORY_SEPARATOR . $template . '.' . $extension)
             );
         }
 
@@ -334,8 +334,8 @@ class Template implements TemplateInterface
     {
         $template = $this->sanitizePathSegment($template);
         $currentTemplate = $this->sanitizePathSegment($this->name);
-        $segments = explode(DIRECTORY_SEPARATOR, $currentTemplate);
-        $length = count($segments);
+        $segments = \explode(DIRECTORY_SEPARATOR, $currentTemplate);
+        $length = \count($segments);
 
         if ($length === 1) {
             return $template;
@@ -343,7 +343,7 @@ class Template implements TemplateInterface
 
         $segments[$length - 1] = $template;
 
-        return implode(DIRECTORY_SEPARATOR, $segments);
+        return \implode(DIRECTORY_SEPARATOR, $segments);
     }
 
     /**
@@ -353,7 +353,7 @@ class Template implements TemplateInterface
     {
         $path = $this->getPath();
 
-        return (file_exists($path) && !is_dir($path));
+        return (\file_exists($path) && !\is_dir($path));
     }
 
     /**
@@ -364,10 +364,10 @@ class Template implements TemplateInterface
         $name = $this->sanitizePathSegment($this->name);
         $ds = DIRECTORY_SEPARATOR;
 
-        return sprintf(
+        return \sprintf(
             '%s%s%s%s.%s',
             DIRECTORY_SEPARATOR,
-            trim($this->engine->getDirectory(), $ds),
+            \trim($this->engine->getDirectory(), $ds),
             $ds,
             $name,
             $this->engine->getExtension()
@@ -381,20 +381,20 @@ class Template implements TemplateInterface
     private function sanitizePathSegment($pathSegment): string
     {
         $ds = DIRECTORY_SEPARATOR;
-        $pathSegment = str_replace('\\', $ds, $pathSegment);
+        $pathSegment = \str_replace('\\', $ds, $pathSegment);
 
-        $segments = explode($ds, trim($pathSegment, $ds));
+        $segments = \explode($ds, \trim($pathSegment, $ds));
 
         $sanitizedSegments = [];
         foreach ($segments as $segment) {
-            $segment = trim(basename($segment), '.');
+            $segment = \trim(\basename($segment), '.');
 
             if ($segment) {
                 $sanitizedSegments[] = $segment;
             }
         }
 
-        return implode($ds, $sanitizedSegments);
+        return \implode($ds, $sanitizedSegments);
     }
 
     /**
@@ -408,7 +408,7 @@ class Template implements TemplateInterface
 
         foreach ($functions as $k => $v) {
             $params = [];
-            if (is_numeric($k)) {
+            if (\is_numeric($k)) {
                 $filter = $v;
             } else {
                 $filter = $k;
@@ -417,11 +417,11 @@ class Template implements TemplateInterface
 
             $arguments = $this->getFunctionArguments($appliedValue, $params);
 
-            if (!is_null($appliedValue)) {
-                if (is_callable($filter)) {
-                    $appliedValue = call_user_func_array($filter, $arguments);
+            if (!\is_null($appliedValue)) {
+                if (\is_callable($filter)) {
+                    $appliedValue = \call_user_func_array($filter, $arguments);
                 } else {
-                    $appliedValue = call_user_func_array(
+                    $appliedValue = \call_user_func_array(
                         $this->engine->getFilterFunction($filter),
                         $arguments
                     );
@@ -438,7 +438,7 @@ class Template implements TemplateInterface
      */
     private function getFunctionParams($params): array
     {
-        if (!is_array($params)) {
+        if (!\is_array($params)) {
             $params = [$params];
         }
 
@@ -452,7 +452,7 @@ class Template implements TemplateInterface
      */
     private function getFunctionArguments($value, $params)
     {
-        return array_merge(
+        return \array_merge(
             [$value],
             $this->getFunctionParams($params)
         );
