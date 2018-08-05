@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Tooolooop.
- * Copyright (c) 2017 Roman Zaycev <box@romanzaycev.ru>
+ * Copyright (c) 2017-2018 Roman Zaycev <box@romanzaycev.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -34,7 +34,7 @@ class Scope implements ScopeInterface
     /**
      * @var array
      */
-    private $data = [];
+    protected $data = [];
 
     /**
      * Set template.
@@ -123,13 +123,23 @@ class Scope implements ScopeInterface
      */
     public function perform(string $path)
     {
-        $context = function () use ($path) {
+        $context = $this->getContext();
+        $context($path);
+    }
+
+    /**
+     * Get runtime context
+     *
+     * @return \Closure<string>
+     */
+    protected function getContext()
+    {
+        return function ($path) {
             \extract($this->data);
 
             /** @noinspection PhpIncludeInspection */
             include $path;
         };
-        $context();
     }
 
     /**

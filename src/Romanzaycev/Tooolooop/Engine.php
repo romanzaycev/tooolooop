@@ -28,7 +28,7 @@ use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 class Engine implements EngineInterface
 {
 
-    const VERSION = '0.3.0';
+    const VERSION = '0.3.1';
 
     /**
      * @var string

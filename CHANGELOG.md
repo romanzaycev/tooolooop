@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2018-08-05
+
+### Changed
+
+* Added: extensible scope context
+
 ## [0.3.0] - 2017-12-26
 
 ### Changed
