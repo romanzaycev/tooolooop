@@ -68,7 +68,7 @@ Need more [examples](https://github.com/romanzaycev/tooolooop/tree/master/exampl
 
 ## Requires
 
-PHP >= 7.1.0
+PHP >= 7.2.0
 
 ## Documentation
 

@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Tooolooop.
- * Copyright (c) 2017 Roman Zaycev <box@romanzaycev.ru>
+ * Copyright (c) 2017-2019 Roman Zaycev <box@romanzaycev.ru>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -35,7 +35,7 @@ class TemplateTest extends TestCase
      */
     private $engine;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $engineMock = \Mockery::mock(EngineInterface::class);
         $engineMock
@@ -57,7 +57,7 @@ class TemplateTest extends TestCase
         $this->engine = $engineMock;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         \Mockery::close();
     }
@@ -74,6 +74,9 @@ class TemplateTest extends TestCase
         $this->assertEquals($template, $template->assign(['foo', 'bar']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRender()
     {
         $template = new Template($this->engine, 'foo');

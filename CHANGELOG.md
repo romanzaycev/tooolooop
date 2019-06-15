@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0] - 2019-06-15
+
+### Changed
+
+* Remove PHP 7.1 support
+* Switched to PHPIUnit 8
+
 ## [0.3.1] - 2018-08-05
 
 ### Changed
