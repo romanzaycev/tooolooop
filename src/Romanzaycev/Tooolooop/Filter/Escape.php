@@ -34,7 +34,7 @@ class Escape extends Filter
     {
         return function ($value = '') {
             return \htmlspecialchars(
-                $value,
+                (string)$value,
                 \ENT_QUOTES,
                 'UTF-8'
             );
