@@ -1,6 +1,6 @@
 # Tooolooop
 ---
-[![Build status][travis-image]][travis-url] [![Code coverages][codecov-image]][codecov-url] [![Code climate][codeclimate-image]][codeclimate-url]
+[![Build status][travis-image]][travis-url] [![Code coverages][codecov-image]][codecov-url] [![Code climate][codeclimate-image]][codeclimate-url] [![Latest Stable Version](https://poser.pugx.org/romanzaycev/tooolooop/v/stable)](https://packagist.org/packages/romanzaycev/tooolooop) [![Total Downloads](https://poser.pugx.org/romanzaycev/tooolooop/downloads)](https://packagist.org/packages/romanzaycev/tooolooop)
 
 
 PHP7 lightweight native templates.
