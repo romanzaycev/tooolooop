@@ -30,7 +30,7 @@ use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 class Engine implements EngineInterface
 {
 
-    const VERSION = '0.5.0';
+    const VERSION = '0.5.1';
 
     /**
      * @var string
@@ -59,6 +59,11 @@ class Engine implements EngineInterface
      * @var ContainerInterface
      */
     private $psrContainer;
+
+    /**
+     * @var string
+     */
+    private $containerScopeId = ScopeInterface::class;
 
     /**
      * Engine constructor.
@@ -203,8 +208,8 @@ class Engine implements EngineInterface
         $scope = null;
 
         if ($this->psrContainer instanceof ContainerInterface) {
-            if ($this->psrContainer->has(ScopeInterface::class)) {
-                $scope = $this->psrContainer->get(ScopeInterface::class);
+            if ($this->psrContainer->has($this->containerScopeId)) {
+                $scope = $this->psrContainer->get($this->containerScopeId);
             }
         }
 
@@ -224,6 +229,14 @@ class Engine implements EngineInterface
     public function setContainer(ContainerInterface $container): void
     {
         $this->psrContainer = $container;
+    }
+
+    /**
+     * @param string $containerScopeId
+     */
+    public function setContainerScopeId(string $containerScopeId): void
+    {
+        $this->containerScopeId = $containerScopeId;
     }
 
 }

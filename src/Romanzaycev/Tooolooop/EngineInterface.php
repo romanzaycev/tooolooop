@@ -105,4 +105,11 @@ interface EngineInterface
      */
     public function setContainer(ContainerInterface $container): void;
 
+    /**
+     * Name of container record with Scope implementation
+     *
+     * @param string $containerScopeId
+     */
+    public function setContainerScopeId(string $containerScopeId): void;
+
 }
