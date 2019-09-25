@@ -10,10 +10,12 @@
 
 namespace Romanzaycev\Tooolooop;
 
+use Psr\Container\ContainerInterface;
 use Romanzaycev\Tooolooop\Filter\Escape;
 use Romanzaycev\Tooolooop\Filter\Filter;
 use Romanzaycev\Tooolooop\Filter\Replace;
 use Romanzaycev\Tooolooop\Scope\Scope;
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 use Romanzaycev\Tooolooop\Template\Template;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
 use Romanzaycev\Tooolooop\Filter\FilterInterface;
@@ -28,7 +30,7 @@ use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 class Engine implements EngineInterface
 {
 
-    const VERSION = '0.4.2';
+    const VERSION = '0.5.0';
 
     /**
      * @var string
@@ -52,6 +54,11 @@ class Engine implements EngineInterface
      * @var string
      */
     private $scopeClass = Scope::class;
+
+    /**
+     * @var ContainerInterface
+     */
+    private $psrContainer;
 
     /**
      * Engine constructor.
@@ -186,6 +193,37 @@ class Engine implements EngineInterface
     public function getScopeClass(): string
     {
         return $this->scopeClass;
+    }
+
+    /**
+     * @return ScopeInterface
+     */
+    public function getScope(): ScopeInterface
+    {
+        $scope = null;
+
+        if ($this->psrContainer instanceof ContainerInterface) {
+            if ($this->psrContainer->has(ScopeInterface::class)) {
+                $scope = $this->psrContainer->get(ScopeInterface::class);
+            }
+        }
+
+        if (!$scope) {
+            $scopeClass = $this->getScopeClass();
+            $scope = new $scopeClass();
+        }
+
+        return $scope;
+    }
+
+    /**
+     * Inject PSR-11 container instance
+     *
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->psrContainer = $container;
     }
 
 }

@@ -10,7 +10,9 @@
 
 namespace Romanzaycev\Tooolooop;
 
+use Psr\Container\ContainerInterface;
 use Romanzaycev\Tooolooop\Scope\Scope;
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
 use Romanzaycev\Tooolooop\Filter\FilterInterface;
 
@@ -23,6 +25,12 @@ use Romanzaycev\Tooolooop\Filter\FilterInterface;
 interface EngineInterface
 {
 
+    /**
+     * Makes template instance
+     *
+     * @param string $template template name
+     * @return TemplateInterface
+     */
     public function make(string $template): TemplateInterface;
 
     /**
@@ -82,5 +90,19 @@ interface EngineInterface
      * @return string class name
      */
     public function getScopeClass(): string;
+
+    /**
+     * Returns Scope instance
+     *
+     * @return ScopeInterface
+     */
+    public function getScope(): ScopeInterface;
+
+    /**
+     * Inject PSR-11 container instance
+     *
+     * @param ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container): void;
 
 }

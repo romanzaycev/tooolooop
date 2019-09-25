@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.5.0] - 2019-09-25
+
+* PSR-11 container support
+* Escape filter fixes
+
 ## [0.4.0] - 2019-06-15
 
 ### Changed

@@ -11,10 +11,13 @@
 namespace Romanzaycev\Tooolooop\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use Romanzaycev\Tooolooop\Engine;
 use Romanzaycev\Tooolooop\EngineInterface;
 use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 use Romanzaycev\Tooolooop\Filter\FilterInterface;
+use Romanzaycev\Tooolooop\Scope\Scope;
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 use Romanzaycev\Tooolooop\Template\TemplateInterface;
 
 /**
@@ -64,6 +67,9 @@ class EngineTest extends TestCase
         $this->assertEquals('foo', $engine->getExtension());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testAddFilterWithClosure()
     {
         $engine = new Engine();
@@ -74,6 +80,9 @@ class EngineTest extends TestCase
         $this->assertEquals($closure(), $engine->getFilterFunction('foo')());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testAddFilterWithFilterInterface()
     {
         $mock = \Mockery::mock(FilterInterface::class);
@@ -98,6 +107,9 @@ class EngineTest extends TestCase
         $engine->addFilter('foo');
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testGetNotExistsFilter()
     {
         $engine = new Engine();
@@ -105,12 +117,18 @@ class EngineTest extends TestCase
         $engine->getFilterFunction('foo');
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testDefaultFilterEscape()
     {
         $engine = new Engine();
         $this->assertEquals('&gt;', $engine->getFilterFunction('escape')('>'));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testDefaultFilterReplace()
     {
         $engine = new Engine();
@@ -122,5 +140,61 @@ class EngineTest extends TestCase
         $engine = new Engine();
         $engine->setScopeClass('foo');
         $this->assertEquals('foo', $engine->getScopeClass());
+    }
+
+    public function testGetScope()
+    {
+        $engine = new Engine();
+        $this->assertInstanceOf(ScopeInterface::class, $engine->getScope());
+    }
+
+    public function testGetScopeWithEmptyContainer()
+    {
+        $stubContainer = new class implements ContainerInterface {
+            public function get($id)
+            {
+                return null;
+            }
+
+            public function has($id)
+            {
+                return false;
+            }
+        };
+
+        $engine = new Engine();
+        $engine->setContainer($stubContainer);
+
+        $this->assertInstanceOf(ScopeInterface::class, $engine->getScope());
+    }
+
+    public function testGetScopeFromContainer()
+    {
+        $stubContainer = new class implements ContainerInterface {
+            public function get($id)
+            {
+                if ($id === ScopeInterface::class) {
+                    return new class extends Scope {
+                        public function __toString()
+                        {
+                            return "foobarbaz";
+                        }
+                    };
+                }
+
+                return null;
+            }
+
+            public function has($id)
+            {
+                return $id === ScopeInterface::class;
+            }
+        };
+
+        $engine = new Engine();
+        $engine->setContainer($stubContainer);
+        $scope = $engine->getScope();
+
+        $this->assertEquals("foobarbaz", (string)$scope);
     }
 }

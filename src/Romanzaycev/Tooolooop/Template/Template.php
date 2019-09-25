@@ -119,13 +119,13 @@ class Template implements TemplateInterface
         }
 
         $bufferingLevel = 0;
+
         try {
             $bufferingLevel = \ob_get_level();
             \ob_start();
 
             if (\is_null($scope)) {
-                $scopeClass = $this->engine->getScopeClass();
-                $scope = new $scopeClass();
+                $scope = $this->engine->getScope();
             }
 
             $scope->setTemplate($this);

@@ -10,6 +10,7 @@
 
 namespace Romanzaycev\Tooolooop\Tests;
 
+use Mockery\MockInterface;
 use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\TestCase;
 use Romanzaycev\Tooolooop\EngineInterface;
@@ -30,12 +31,20 @@ use Romanzaycev\Tooolooop\Template\TemplateInterface;
 class TemplateTest extends TestCase
 {
 
-    /**
-     * @var EngineInterface
-     */
-    private $engine;
-
     protected function setUp(): void
+    {
+        
+    }
+    
+    protected function tearDown(): void
+    {
+        \Mockery::close();
+    }
+
+    /**
+     * @return EngineInterface|MockInterface
+     */
+    private function getEngineMock(): EngineInterface
     {
         $engineMock = \Mockery::mock(EngineInterface::class);
         $engineMock
@@ -48,29 +57,28 @@ class TemplateTest extends TestCase
             ->shouldReceive('getFilterFunction')
             ->withArgs(['escape'])
             ->andReturn(function ($param) {
-                return \htmlspecialchars($param, \ENT_QUOTES, 'UTF-8');
+                return \htmlspecialchars((string)$param, \ENT_QUOTES, 'UTF-8');
             });
         $engineMock
             ->shouldReceive('getScopeClass')
             ->andReturn(Scope::class);
-
-        $this->engine = $engineMock;
+        $engineMock
+            ->shouldReceive('getScope')
+            ->withAnyArgs()
+            ->andReturnUsing(function () { return new Scope(); });
+        
+        return $engineMock;
     }
-
-    protected function tearDown(): void
-    {
-        \Mockery::close();
-    }
-
+    
     public function testConstruct()
     {
-        $template = new Template($this->engine, 'foo');
+        $template = new Template($this->getEngineMock(), 'foo');
         $this->assertInstanceOf(TemplateInterface::class, $template);
     }
 
     public function testAssign()
     {
-        $template = new Template($this->engine, 'foo');
+        $template = new Template($this->getEngineMock(), 'foo');
         $this->assertEquals($template, $template->assign(['foo', 'bar']));
     }
 
@@ -79,123 +87,162 @@ class TemplateTest extends TestCase
      */
     public function testRender()
     {
-        $template = new Template($this->engine, 'foo');
+        $template = new Template($this->getEngineMock(), 'foo');
         $this->assertEquals('<div>bar</div>', $template->render(['foo' => 'bar']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithNotFoundTemplate()
     {
-        $template = new Template($this->engine, 'not_found_template');
+        $template = new Template($this->getEngineMock(), 'not_found_template');
         $this->expectException(TemplateNotFoundException::class);
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithUndefinedVariable()
     {
-        $template = new Template($this->engine, 'foo');
+        $template = new Template($this->getEngineMock(), 'foo');
         $this->expectException(Notice::class);
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testCorrectThrowsInBuffer()
     {
-        $template = new Template($this->engine, 'throws');
+        $template = new Template($this->getEngineMock(), 'throws');
         $this->expectException(\Exception::class);
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithParentTemplate()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['parent'])
-            ->andReturn(new Template($this->engine, 'parent'));
+            ->andReturn(new Template($engine, 'parent'));
 
-        $template = new Template($this->engine, 'child');
+        $template = new Template($engine, 'child');
         $this->assertEquals('<div>YOLO</div>', $template->render());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderParentTemplateWithDataPassing()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['parent_data'])
-            ->andReturn(new Template($this->engine, 'parent_data'));
+            ->andReturn(new Template($engine, 'parent_data'));
 
-        $template = new Template($this->engine, 'child_data');
+        $template = new Template($engine, 'child_data');
         $this->assertEquals('<div>YOLO</div>', $template->render());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithSiblingParentTemplate()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['sibling/tpla'])
-            ->andReturn(new Template($this->engine, 'sibling/tpla'));
+            ->andReturn(new Template($engine, 'sibling/tpla'));
 
-        $template = new Template($this->engine, 'sibling/tplb');
+        $template = new Template($engine, 'sibling/tplb');
         $this->assertEquals('<div>foo</div>', $template->render());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderLoad()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['foo'])
-            ->andReturn(new Template($this->engine, 'foo'));
+            ->andReturn(new Template($engine, 'foo'));
 
-        $template = new Template($this->engine, 'load');
+        $template = new Template($engine, 'load');
         $this->assertEquals('<div>foo</div>', $template->render(['foo' => 'foo']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithSiblinggLoad()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['foo'])
-            ->andReturn(new Template($this->engine, 'foo'));
+            ->andReturn(new Template($engine, 'foo'));
 
-        $template = new Template($this->engine, 'load_sibling');
+        $template = new Template($engine, 'load_sibling');
         $this->assertEquals('<div>foo</div>', $template->render(['foo' => 'foo']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithEmptyBlock()
     {
-        $template = new Template($this->engine, 'parent');
+        $template = new Template($this->getEngineMock(), 'parent');
         $this->assertEquals('<div></div>', $template->render());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderBlock()
     {
-        $this
-            ->engine
+        $engine = $this->getEngineMock();
+        $engine
             ->shouldReceive('make')
             ->withArgs(['block/parent'])
-            ->andReturn(new Template($this->engine, 'block/parent'));
+            ->andReturn(new Template($engine, 'block/parent'));
 
-        $template = new Template($this->engine, 'block/child');
+        $template = new Template($engine, 'block/child');
         $this->assertEquals('<div>YOLO</div>', $template->render(['foo' => 'YOLO']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderBlockWithEmptyName()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $template = new Template($this->engine, 'block/empty_name');
+        $template = new Template($this->getEngineMock(), 'block/empty_name');
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderBlockWithRestrictedName()
     {
         $this->expectException(RestrictedBlockName::class);
-        $template = new Template($this->engine, 'block/restricted_name');
+        $template = new Template($this->getEngineMock(), 'block/restricted_name');
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithCustomExtension()
     {
         $engineMock = \Mockery::mock(EngineInterface::class);
@@ -208,46 +255,67 @@ class TemplateTest extends TestCase
         $engineMock
             ->shouldReceive('getScopeClass')
             ->andReturn(Scope::class);
+        $engineMock
+            ->shouldReceive('getScope')
+            ->andReturn(new Scope());
 
         $template = new Template($engineMock, 'custom_ext');
         $this->assertEquals('foo', $template->render());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testNestedBlockRenderingException()
     {
-        $template = new Template($this->engine, 'block/nested');
+        $template = new Template($this->getEngineMock(), 'block/nested');
         $this->expectException(NestedBlockRenderingException::class);
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testUnexpectedEndRendering()
     {
-        $template = new Template($this->engine, 'block/end');
+        $template = new Template($this->getEngineMock(), 'block/end');
         $this->expectException(NoStartingBlockException::class);
         $template->render();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testEscapeFilter()
     {
-        $template = new Template($this->engine, 'filter/foo');
+        $template = new Template($this->getEngineMock(), 'filter/foo');
         $this->assertEquals('<div>&gt;</div>', $template->render(['foo' => '>']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testFilterPhpFunc()
     {
-        $template = new Template($this->engine, 'filter/func');
+        $template = new Template($this->getEngineMock(), 'filter/func');
         $this->assertEquals('Yolo', $template->render(['foo' => 'yolo']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testFilterPhpFuncWithArgs()
     {
-        $template = new Template($this->engine, 'filter/func_args');
+        $template = new Template($this->getEngineMock(), 'filter/func_args');
         $this->assertEquals('foo', $template->render(['foo' => '    foo    ']));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRenderWithCustomScope()
     {
-        $template = new Template($this->engine, 'custom_scope');
+        $template = new Template($this->getEngineMock(), 'custom_scope');
         $fixture = new class extends Scope {
             protected function custom()
             {

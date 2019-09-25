@@ -70,9 +70,49 @@ Need more [examples](https://github.com/romanzaycev/tooolooop/tree/master/exampl
 
 PHP >= 7.2.0
 
-## Documentation
+## Extending library
 
-`@TODO`
+### PSR-11 container support 
+
+You can use a PSR-11 compatible
+container and inject dependencies into objects
+that are generated inside the library (Scope):
+
+```php
+<?php
+
+use Romanzaycev\Tooolooop\Engine;
+use Psr\Container\ContainerInterface;
+
+/** @var ContainerInterface $container */
+$container = ...; // Initialize PSR-11 container
+                  // and define implementation of Romanzaycev\Tooolooop\Scope\ScopeInterface
+$engine = new Engine(__DIR__ . '/views');
+$engine->setContainer($container);
+$template = $engine->make('page'); // <-- Scope in this template will be obtained from container
+```
+
+You can define the implementation of `Romanzaycev\Tooolooop\Scope\ScopeInterface` in the
+container configuration and engine instances Scope through it.
+
+
+### User scope
+
+Otherwise you can specify a custom implementation of the class via `$engine->setScopeClass()`:
+```php
+<?php
+
+use Romanzaycev\Tooolooop\Engine;
+use Romanzaycev\Tooolooop\Scope\Scope;
+use Romanzaycev\Tooolooop\Scope\ScopeInterface;
+
+class UserSpecificScope extends Scope implements ScopeInterface {
+    // Realize your additions, ex. widget system :-)
+}
+
+$engine = new Engine(__DIR__ . '/views');
+$engine->setScopeClass(UserSpecificScope::class);
+```
 
 ## Testing
 
