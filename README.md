@@ -95,6 +95,8 @@ $template = $engine->make('page'); // <-- Scope in this template will be obtaine
 You can define the implementation of `Romanzaycev\Tooolooop\Scope\ScopeInterface` in the
 container configuration and engine instances Scope through it.
 
+⚠️ ATTENTION! Make sure that the container returns a new instance of Scope! Cached Scope instance does not work.
+
 
 ### User scope
 
