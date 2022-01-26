@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.3] - 2022-01-26
+
+* Scope `$path` variable fix
+
 ## [0.5.0] - 2019-09-25
 
 * PSR-11 container support

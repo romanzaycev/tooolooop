@@ -134,11 +134,11 @@ class Scope implements ScopeInterface
      */
     protected function getContext()
     {
-        return function ($path) {
+        return function ($__0path__) {
             \extract($this->data);
 
             /** @noinspection PhpIncludeInspection */
-            include $path;
+            include $__0path__;
         };
     }
 

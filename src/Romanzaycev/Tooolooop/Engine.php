@@ -30,7 +30,7 @@ use Romanzaycev\Tooolooop\Exceptions\FilterNotFoundException;
 class Engine implements EngineInterface
 {
 
-    const VERSION = '0.5.2';
+    const VERSION = '0.5.3';
 
     /**
      * @var string

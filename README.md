@@ -99,7 +99,7 @@ container configuration and engine instances Scope through it.
 
 ### User scope
 
-Otherwise you can specify a custom implementation of the class via `$engine->setScopeClass()`:
+Otherwise, you can specify a custom implementation of the class via `$engine->setScopeClass()`:
 ```php
 <?php
 
@@ -108,7 +108,7 @@ use Romanzaycev\Tooolooop\Scope\Scope;
 use Romanzaycev\Tooolooop\Scope\ScopeInterface;
 
 class UserSpecificScope extends Scope implements ScopeInterface {
-    // Realize your additions, ex. widget system :-)
+    // Implement your additions, ex. widget system :-)
 }
 
 $engine = new Engine(__DIR__ . '/views');
